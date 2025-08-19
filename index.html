@@ -33,30 +33,44 @@
             display: block;
             padding-top: 0.1em;
         }
+        /* Remove arrows from number inputs */
+        input[type="number"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            appearance: none;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center py-12 px-4">
-    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 hover:scale-105">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">mNAV Months-to-Cover Calculator</h1>
         <p class="text-center text-gray-600 mb-6">Calculate number of months to cover the mNAV premium for Bitcoin treasury companies.</p>
         
         <form id="calculator-form" class="space-y-6">
             <div>
-                <label for="mnav-multiple" class="block text-sm font-medium text-gray-700">mNAV Multiple (Market Cap / NAV)</label>
-                <input type="number" id="mnav-multiple" step="0.01" placeholder="e.g. 3" required min="1.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
+                <label for="mnav-multiple" class="block text-sm font-medium text-gray-700">mNAV Multiple (Enterprise value / NAV)</label>
+                <input type="number" id="mnav-multiple" step="0.01" placeholder=" e.g. 3" required min="1.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
             </div>
             
             <div>
                 <label for="btc-yield-multiple" class="block text-sm font-medium text-gray-700">BTC Yield Multiple over T period</label>
-                <input type="number" id="btc-yield-multiple" step="0.0001" placeholder="e.g. 2.1" required min="1.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
+                <input type="number" id="btc-yield-multiple" step="0.0001" placeholder=" e.g. 2.1" required min="1.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
             </div>
             
             <div>
                 <label for="t-period" class="block text-sm font-medium text-gray-700">T - Observation Period (months)</label>
-                <input type="number" id="t-period" placeholder="e.g. 12" required min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
+                <input type="number" id="t-period" placeholder=" e.g. 12" required min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring focus:ring-gold-200 focus:ring-opacity-50">
             </div>
             
-            <button type="submit" class="w-full bg-gold-500 text-white py-2 px-4 rounded-md hover:bg-gold-600 transition-colors duration-200">Calculate</button>
+            <div class="flex justify-center space-x-4">
+                <button type="submit" class="w-full bg-gold-500 text-white py-2 px-4 rounded-md hover:bg-gold-600 transition-colors duration-200">Calculate</button>
+                <button type="button" id="reset-button" class="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors duration-200">Reset</button>
+            </div>
         </form>
         
         <div id="result" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-md opacity-0 transition-opacity duration-300">
@@ -69,30 +83,48 @@
             <summary class="bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-md cursor-pointer hover:bg-gray-200 transition-colors duration-200">Click to View Formula Explanation</summary>
             <div class="mt-4 text-gray-700">
                 <h2 class="text-xl font-semibold mb-2">How the Formula Works</h2>
-                <p class="mb-4">This calculator estimates the time (in months) it will take for the Net Asset Value (NAV) to grow enough to cover the current premium, based on BTC yield growth.</p>
-                
-                <h3 class="text-lg font-medium mb-2">The Formula:</h3>
-                <div class="formula bg-gray-50 p-3 rounded-md text-center text-lg mb-4">
-                    <div class="math-equation">
-                        <span>t = T &times;</span>
-                        <div class="fraction">
-                            <span class="numerator">ln(mNAV multiple)</span>
-                            <span class="denominator">ln(BTC yield multiple)</span>
+                    <p class="mb-4">This calculator estimates the time (in months) it will take for the Net Asset Value (NAV) to grow enough to cover the current premium, based on BTC yield growth.</p>
+                    
+                    <h3 class="text-lg font-medium mb-2">The Formula:</h3>
+                    <div class="formula bg-gray-50 p-3 rounded-md text-center text-lg mb-4">
+                        <div class="math-equation">
+                            <span>t = T &times;</span>
+                            <div class="fraction">
+                                <span class="numerator">ln(mNAV multiple)</span>
+                                <span class="denominator">ln(BTC yield multiple)</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <h3 class="text-lg font-medium mb-2">Breakdown:</h3>
-                <ul class="list-disc pl-5 mb-4 space-y-2">
-                    <li><strong>t</strong>: Months until NAV covers the premium (the result).</li>
-                    <li><strong>T</strong>: Observation period in months (e.g., time of measured BTC yield).</li>
-                    <li><strong>mNAV multiple</strong>: Market Cap ÷ NAV (e.g., 2 means 100% premium).</li>
-                    <li><strong>BTC yield multiple</strong>: Factor by which BTC yield grows NAV over T (e.g., 2x, 3x).</li>
-                </ul>
-                
-                <h3 class="text-lg font-medium mb-2">Explanation:</h3>
-                <p>The formula uses natural logarithms to model exponential growth from BTC yield, extrapolating how long it will take for NAV to match the market cap.</p>
-                <p class="mt-2">Example: With mNAV multiple 1.5, BTC yield multiple 2 over 12 months, it might take ~7 months.</p>
+                    
+                    <h3 class="text-lg font-medium mb-2">Breakdown:</h3>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>t</strong>: Months until NAV covers the premium (the result).</li>
+                        <li><strong>mNAV multiple</strong>: Enterprise value ÷ NAV (e.g. mNAV 2 means company valuation is double the Net Asset Value).</li>
+                        <li><strong>BTC yield multiple</strong>: Factor by which BTC yield grows NAV over T period (e.g. 2x, 3x).</li>
+                        <li><strong>T</strong>: Observation period in months (time of measured BTC yield).</li>
+                    </ul>
+                    
+                    <h3 class="text-lg font-medium mb-2">Explanation:</h3>
+                    <p>The formula uses natural logarithms to model exponential growth from BTC yield, extrapolating how long it will take for NAV to match the current valuation of the company at the current rate of Bitcoin accumulation.</p>
+                    <p class="mt-2">Example: With mNAV multiple 1.5, BTC yield multiple 2 over 12 months, it might take ~7 months.</p>
+
+                <h2 class="text-xl font-semibold mb-2 mt-6">Why this is Useful</h2>
+                    <p class="mb-2">
+                        The expected cover date shows the time frame the investor can expect the NAV to cover to valuation premium to reach an mNAV multiple of 1, effectively neutralizing the premium. Ater that point, any further growth in Bitcoin/share would directly increase valuation.
+                    </p>
+                    <p class="mb-4">
+                        That investor can use this information to assess how that time frame aligns with their investment time horizon and risk appetite. It provides a more dynamic view of valuation, by integrating the speed of Bitcoin accretion, allowing for better-informed decisions.
+                    </p>
+
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Bridges valuation and fundamentals:</strong> It connects the market’s premium (mNAV multiple) directly with measurable BTC yield performance, helping investors see if price is running ahead of fundamentals or being backed up by strong treasury growth.</li>
+                        <li><strong>Comparability across companies:</strong> Investors can compare different Bitcoin treasury companies not just by premium multiples, but by how quickly those premiums could be covered under each company’s BTC accumulation rate.</li>
+                        <li><strong>Risk assessment:</strong> A very high mNAV multiple with a long Months-to-Cover horizon may signal speculative overvaluation, while a shorter horizon suggests the company’s BTC strategy is effectively supporting its valuation.</li>
+                    </ul>
+
+                    <p class="mb-2">
+                        The metric was introduced by Adam Back (<a href="https://x.com/adam3us/status/1920999874549445100" class="text-gray-700 underline hover:text-gold-500 transition-colors duration-200">@adam3us</a> on 𝕏).
+                    </p>
             </div>
         </details>
     </div>
@@ -105,8 +137,8 @@
                 extend: {
                     colors: {
                         gold: {
-                            500: '#f1c40f',
-                            600: '#d4a017'
+                            500: '#f7931a',
+                            600: '#b56c14'
                         }
                     }
                 }

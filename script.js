@@ -47,3 +47,16 @@ document.getElementById('calculator-form').addEventListener('submit', function(e
     resultDiv.classList.remove('hidden', 'opacity-0');
     resultDiv.classList.add('opacity-100');
 });
+
+// Reset button functionality
+document.getElementById('reset-button').addEventListener('click', function() {
+    document.getElementById('calculator-form').reset();
+    const resultDiv = document.getElementById('result');
+    resultDiv.classList.add('hidden', 'opacity-0');
+    resultDiv.classList.remove('opacity-100');
+    resultDiv.innerHTML = `
+        <h2 class="text-xl font-semibold text-green-800">Result:</h2>
+        <p class="text-lg text-green-700">Months-to-Cover (t): <span id="months" class="font-bold"></span></p>
+        <p class="text-lg text-green-700">Expected Cover Date: <span class="font-bold"></span></p>
+    `;
+});
